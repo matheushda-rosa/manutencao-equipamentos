@@ -300,7 +300,7 @@ ajuste a variável `baseUrl`.
 | Item | Link |
 |---|---|
 | Repositório | <https://github.com/matheushda-rosa/manutencao-equipamentos> |
-| Front-end (Firebase Hosting) | `https://SEU-PROJETO.web.app` |
+| Front-end (Firebase Hosting) | <https://manutencao-equipamentos-66448.web.app> |
 | API (Render) | <https://manutencao-equipamentos.onrender.com> |
 | Banco de dados | Supabase PostgreSQL (projeto privado) |
 
