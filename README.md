@@ -301,7 +301,7 @@ ajuste a variável `baseUrl`.
 |---|---|
 | Repositório | <https://github.com/matheushda-rosa/manutencao-equipamentos> |
 | Front-end (Firebase Hosting) | `https://SEU-PROJETO.web.app` |
-| API (Render) | `https://SEU-SERVICO.onrender.com` |
+| API (Render) | <https://manutencao-equipamentos.onrender.com> |
 | Banco de dados | Supabase PostgreSQL (projeto privado) |
 
 > A API está hospedada no plano gratuito do Render, que hiberna o serviço após

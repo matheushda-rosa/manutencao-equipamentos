@@ -8,7 +8,11 @@
  * ficar no cliente. A service role key do Supabase, nunca.
  */
 
-export const API_URL = 'http://localhost:3000/api';
+// Em desenvolvimento aponta para a API local; publicado, para o Render.
+export const API_URL =
+  ['localhost', '127.0.0.1'].includes(location.hostname)
+    ? 'http://localhost:3000/api'
+    : 'https://manutencao-equipamentos.onrender.com/api';
 
 export const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyAHMfuIeFdZs3EgXuXD6lVU7m2yh9rWrQE',
