@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MN">
+  <rect width="64" height="64" rx="14" fill="#1d3461"/>
+  <text x="32" y="43" text-anchor="middle" fill="#f6a623"
+        font-family="system-ui, -apple-system, Segoe UI, Arial, sans-serif"
+        font-size="27" font-weight="700" letter-spacing="-1">MN</text>
+</svg>

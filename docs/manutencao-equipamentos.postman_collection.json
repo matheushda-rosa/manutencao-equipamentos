@@ -1,0 +1,1361 @@
+{
+  "info": {
+    "name": "Manutencao de Equipamentos - API",
+    "description": "Colecao de testes da API do Sistema de Controle de Manutencao de Equipamentos.\n\n## Como usar\n\n1. Ajuste a variavel `baseUrl` (local ou Render).\n2. Para autenticar, preencha a variavel `token` com o ID Token do Firebase.\n   Para obter: faca login no sistema, abra o DevTools e rode no console\n   `await firebase.auth().currentUser.getIdToken()`.\n3. Em desenvolvimento, a alternativa e colocar `AUTH_DISABLED=true` no .env\n   do backend: as rotas passam a aceitar requisicoes sem token.\n\nA autenticacao Bearer esta configurada no nivel da colecao, entao todas as\nrequisicoes herdam o token automaticamente.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Verificacao",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Rota publica. Nao exige token. Usada pelo Render como health check."
+          },
+          "response": []
+        },
+        {
+          "name": "Meu usuario e perfil",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/eu",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "eu"
+              ]
+            },
+            "description": "Devolve nome, email e perfil (ADMIN ou TECNICO) do usuario do token."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - Dashboard",
+      "item": [
+        {
+          "name": "Indicadores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard"
+              ]
+            },
+            "description": "Indicadores obrigatorios do item 4.2 e complementares."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Categorias",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias?busca=&pagina=1&limite=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite",
+                  "value": "20",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Criar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Somente ADMIN. Nome duplicado devolve 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Informatica\",\n  \"descricao\": \"Computadores, notebooks e perifericos\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "1"
+              ]
+            },
+            "description": "Aceita atualizacao parcial: envie apenas os campos que mudaram.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Descricao atualizada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias",
+                "1"
+              ]
+            },
+            "description": "Devolve 409 se houver equipamentos vinculados."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Locais",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locais?busca=&pagina=1&limite=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locais"
+              ],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite",
+                  "value": "20",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locais/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locais",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Criar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/locais",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locais"
+              ]
+            },
+            "description": "O endereco e preenchido pelo ViaCEP no front-end; o backend valida.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Galpao de Producao\",\n  \"cep\": \"89805-000\",\n  \"logradouro\": \"Rua Benjamin Constant\",\n  \"numero\": \"850\",\n  \"complemento\": \"Galpao B\",\n  \"bairro\": \"Presidente Medici\",\n  \"cidade\": \"Chapeco\",\n  \"uf\": \"SC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/locais/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locais",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero\": \"900\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locais/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "locais",
+                "1"
+              ]
+            },
+            "description": "Devolve 409 se houver equipamentos vinculados."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Tecnicos",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tecnicos?busca=&pagina=1&limite=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tecnicos"
+              ],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite",
+                  "value": "20",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tecnicos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tecnicos",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Criar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tecnicos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tecnicos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Pereira\",\n  \"telefone\": \"(49) 99111-2233\",\n  \"email\": \"carlos.pereira@empresa.com.br\",\n  \"especialidade\": \"Eletrica\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tecnicos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tecnicos",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"especialidade\": \"Eletrica industrial\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Desativar (sem excluir)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tecnicos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tecnicos",
+                "1"
+              ]
+            },
+            "description": "Alternativa recomendada a exclusao quando o tecnico tem historico.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tecnicos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tecnicos",
+                "1"
+              ]
+            },
+            "description": "Devolve 409 se houver ordens de servico vinculadas."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Equipamentos",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos?busca=&status=&categoriaId=&localId=&pagina=1&limite=12",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos"
+              ],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "categoriaId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "localId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite",
+                  "value": "12",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Historico de manutencoes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/1/historico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "1",
+                "historico"
+              ]
+            },
+            "description": "Item 4.8: todas as manutencoes do equipamento, com resumo."
+          },
+          "response": []
+        },
+        {
+          "name": "Criar (sem foto, JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos"
+              ]
+            },
+            "description": "Patrimonio duplicado devolve 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Compressor de Ar 100L\",\n  \"patrimonio\": \"PAT-0010\",\n  \"descricao\": \"Linha de producao 2\",\n  \"dataAquisicao\": \"2024-03-15\",\n  \"status\": \"ATIVO\",\n  \"categoriaId\": 3,\n  \"localId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Criar (com foto, multipart)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos"
+              ]
+            },
+            "description": "Selecione um arquivo no campo 'foto'. Formatos: JPEG, PNG, WEBP. Limite 5 MB.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "nome",
+                  "value": "Empilhadeira Eletrica",
+                  "type": "text"
+                },
+                {
+                  "key": "patrimonio",
+                  "value": "PAT-0011",
+                  "type": "text"
+                },
+                {
+                  "key": "dataAquisicao",
+                  "value": "2024-05-10",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "ATIVO",
+                  "type": "text"
+                },
+                {
+                  "key": "categoriaId",
+                  "value": "3",
+                  "type": "text"
+                },
+                {
+                  "key": "localId",
+                  "value": "2",
+                  "type": "text"
+                },
+                {
+                  "key": "foto",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"INATIVO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "1"
+              ]
+            },
+            "description": "Devolve 409 se houver ordens no historico. Remove a foto do bucket."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Ordens de servico",
+      "item": [
+        {
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico?busca=&status=&tipo=&prioridade=&equipamentoId=&tecnicoId=&pagina=1&limite=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico"
+              ],
+              "query": [
+                {
+                  "key": "busca",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "tipo",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "prioridade",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "equipamentoId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "tecnicoId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "pagina",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limite",
+                  "value": "20",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Abrir ordem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico"
+              ]
+            },
+            "description": "O equipamento passa para EM_MANUTENCAO na mesma transacao.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"equipamentoId\": 1,\n  \"tecnicoId\": 1,\n  \"descricao\": \"Equipamento apresenta ruido anormal durante a operacao.\",\n  \"tipo\": \"CORRETIVA\",\n  \"prioridade\": \"ALTA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Abrir ordem preventiva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico"
+              ]
+            },
+            "description": "Alimenta o indicador 'manutencoes preventivas' do Dashboard.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"equipamentoId\": 2,\n  \"tecnicoId\": 2,\n  \"descricao\": \"Revisao preventiva semestral conforme plano de manutencao.\",\n  \"tipo\": \"PREVENTIVA\",\n  \"prioridade\": \"MEDIA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Editar dados da ordem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1"
+              ]
+            },
+            "description": "Nao altera status. Ordem concluida ou cancelada nao pode ser editada (409).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prioridade\": \"URGENTE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar status para EM_ANDAMENTO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1",
+                "status"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"EM_ANDAMENTO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Concluir via status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1",
+                "status"
+              ]
+            },
+            "description": "A solucao e obrigatoria ao concluir. O equipamento volta para ATIVO.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONCLUIDA\",\n  \"solucao\": \"Rolamento substituido e equipamento testado.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Concluir (atalho)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1/concluir",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1",
+                "concluir"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"solucao\": \"Rolamento substituido e equipamento testado.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1",
+                "status"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELADA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Transicao invalida (teste de erro)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ordens-servico/1/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ordens-servico",
+                "1",
+                "status"
+              ]
+            },
+            "description": "Use em uma ordem ja CONCLUIDA. Deve devolver 409 - estado final.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ABERTA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Usuarios e permissoes",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            },
+            "description": "Somente ADMIN."
+          },
+          "response": []
+        },
+        {
+          "name": "Promover a ADMIN",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/2/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "2",
+                "perfil"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"perfil\": \"ADMIN\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rebaixar para TECNICO",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/2/perfil",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "2",
+                "perfil"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"perfil\": \"TECNICO\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Testes de erro",
+      "item": [
+        {
+          "name": "404 - rota inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/nao-existe",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "nao-existe"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "404 - registro inexistente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/99999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "99999"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "400 - validacao",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categorias"
+              ]
+            },
+            "description": "Deve devolver 400 com a lista de campos invalidos em 'detalhes'.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "400 - id invalido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos",
+                "abc"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "409 - patrimonio duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/equipamentos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "equipamentos"
+              ]
+            },
+            "description": "PAT-0001 existe no seed. Deve devolver 409.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Teste duplicado\",\n  \"patrimonio\": \"PAT-0001\",\n  \"dataAquisicao\": \"2024-01-01\",\n  \"categoriaId\": 1,\n  \"localId\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

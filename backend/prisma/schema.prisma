@@ -1,0 +1,167 @@
+// ============================================================
+// Sistema de Controle de Manutencao de Equipamentos
+// Modelagem do banco de dados (Supabase PostgreSQL)
+//
+// Tabelas e colunas em snake_case via @map/@@map; o codigo JavaScript
+// usa camelCase.
+//
+// O historico de manutencoes (item 4.8 do enunciado) e a propria lista
+// de ordens de servico do equipamento, sem tabela separada.
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooler (6543) - aplicacao em runtime
+  directUrl = env("DIRECT_URL")   // conexao direta (5432) - migrations
+}
+
+// ------------------------- ENUMS ----------------------------
+
+/// Perfis de acesso exigidos no item 4.10 do enunciado.
+enum PerfilUsuario {
+  ADMIN
+  TECNICO
+}
+
+enum StatusEquipamento {
+  ATIVO
+  EM_MANUTENCAO
+  INATIVO
+}
+
+enum StatusOrdemServico {
+  ABERTA
+  EM_ANDAMENTO
+  CONCLUIDA
+  CANCELADA
+}
+
+enum PrioridadeOrdem {
+  BAIXA
+  MEDIA
+  ALTA
+  URGENTE
+}
+
+enum TipoManutencao {
+  PREVENTIVA
+  CORRETIVA
+}
+
+// ------------------------- MODELOS --------------------------
+
+/// Usuario autenticado pelo Firebase, espelhado aqui para guardar o
+/// perfil de acesso e permitir vinculo com os demais registros.
+model Usuario {
+  id           Int           @id @default(autoincrement())
+  firebaseUid  String        @unique @map("firebase_uid")
+  nome         String        @db.VarChar(120)
+  email        String        @unique @db.VarChar(160)
+  perfil       PerfilUsuario @default(TECNICO)
+  ativo        Boolean       @default(true)
+  criadoEm     DateTime      @default(now()) @map("criado_em")
+  atualizadoEm DateTime      @updatedAt @map("atualizado_em")
+
+  @@map("usuarios")
+}
+
+model Categoria {
+  id           Int      @id @default(autoincrement())
+  nome         String   @unique @db.VarChar(80)
+  descricao    String?  @db.VarChar(255)
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  equipamentos Equipamento[]
+
+  @@map("categorias")
+}
+
+/// Endereco preenchido automaticamente pela API ViaCEP (item 4.5).
+model Local {
+  id           Int      @id @default(autoincrement())
+  nome         String   @db.VarChar(120)
+  cep          String   @db.VarChar(9)
+  logradouro   String   @db.VarChar(160)
+  numero       String?  @db.VarChar(20)
+  complemento  String?  @db.VarChar(80)
+  bairro       String   @db.VarChar(120)
+  cidade       String   @db.VarChar(120)
+  uf           String   @db.VarChar(2)
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+
+  equipamentos Equipamento[]
+
+  @@map("locais")
+}
+
+model Tecnico {
+  id            Int      @id @default(autoincrement())
+  nome          String   @db.VarChar(120)
+  telefone      String   @db.VarChar(20)
+  email         String   @unique @db.VarChar(160)
+  especialidade String   @db.VarChar(120)
+  ativo         Boolean  @default(true)
+  criadoEm      DateTime @default(now()) @map("criado_em")
+  atualizadoEm  DateTime @updatedAt @map("atualizado_em")
+
+  ordens        OrdemServico[]
+
+  @@map("tecnicos")
+}
+
+model Equipamento {
+  id            Int               @id @default(autoincrement())
+  nome          String            @db.VarChar(120)
+  patrimonio    String            @unique @db.VarChar(40)
+  descricao     String?           @db.VarChar(255)
+  dataAquisicao DateTime          @map("data_aquisicao") @db.Date
+  status        StatusEquipamento @default(ATIVO)
+  /// URL publica da foto no Supabase Storage.
+  fotoUrl       String?           @map("foto_url")
+  /// Caminho dentro do bucket: e o que permite remover ou substituir
+  /// o arquivo depois.
+  fotoPath      String?           @map("foto_path")
+  categoriaId   Int               @map("categoria_id")
+  localId       Int               @map("local_id")
+  criadoEm      DateTime          @default(now()) @map("criado_em")
+  atualizadoEm  DateTime          @updatedAt @map("atualizado_em")
+
+  categoria     Categoria         @relation(fields: [categoriaId], references: [id])
+  local         Local             @relation(fields: [localId], references: [id])
+  ordens        OrdemServico[]
+
+  @@index([categoriaId])
+  @@index([localId])
+  @@index([status])
+  @@map("equipamentos")
+}
+
+model OrdemServico {
+  id            Int                @id @default(autoincrement())
+  equipamentoId Int                @map("equipamento_id")
+  tecnicoId     Int                @map("tecnico_id")
+  descricao     String
+  /// Preenchido na conclusao da manutencao.
+  solucao       String?
+  tipo          TipoManutencao     @default(CORRETIVA)
+  prioridade    PrioridadeOrdem    @default(MEDIA)
+  status        StatusOrdemServico @default(ABERTA)
+  dataAbertura  DateTime           @default(now()) @map("data_abertura")
+  dataConclusao DateTime?          @map("data_conclusao")
+  criadoEm      DateTime           @default(now()) @map("criado_em")
+  atualizadoEm  DateTime           @updatedAt @map("atualizado_em")
+
+  equipamento   Equipamento        @relation(fields: [equipamentoId], references: [id])
+  tecnico       Tecnico            @relation(fields: [tecnicoId], references: [id])
+
+  @@index([equipamentoId])
+  @@index([tecnicoId])
+  @@index([status])
+  @@map("ordens_servico")
+}

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Equipamentos | Controle de Manutencao</title>
+
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header id="cabecalho"></header>
+
+  <main class="container-fluid px-lg-4 conteudo-pagina">
+    <div id="titulo-pagina"></div>
+
+    <!-- Filtros (item 4.3: pesquisar equipamento) -->
+    <div class="barra-filtros mb-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-5 col-xl-4">
+          <label for="busca" class="form-label small text-secondary mb-1">Pesquisar</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control" id="busca" placeholder="Nome ou patrimonio">
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3 col-xl-2">
+          <label for="filtroStatus" class="form-label small text-secondary mb-1">Status</label>
+          <select class="form-select" id="filtroStatus">
+            <option value="">Todos</option>
+            <option value="ATIVO">Ativo</option>
+            <option value="EM_MANUTENCAO">Em manutencao</option>
+            <option value="INATIVO">Inativo</option>
+          </select>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-3">
+          <label for="filtroCategoria" class="form-label small text-secondary mb-1">Categoria</label>
+          <select class="form-select" id="filtroCategoria"></select>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+          <label for="filtroLocal" class="form-label small text-secondary mb-1">Local</label>
+          <select class="form-select" id="filtroLocal"></select>
+        </div>
+      </div>
+    </div>
+
+    <p class="small text-secondary" id="resumo"></p>
+
+    <!-- Grade de equipamentos: cartoes com foto -->
+    <div class="row g-3" id="grade"></div>
+
+    <nav class="d-flex justify-content-center mt-4" id="paginacao"></nav>
+
+    <!-- Modal de cadastro/edicao -->
+    <div class="modal fade" id="modalForm" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <!-- Sem action/method: o envio e feito por fetch em js/equipamentos.js -->
+          <form id="formulario" novalidate>
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitulo">Novo equipamento</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+              <input type="hidden" name="id">
+
+              <div class="row g-3">
+                <!-- Coluna da foto -->
+                <div class="col-12 col-sm-5">
+                  <label class="form-label">Foto do equipamento</label>
+                  <img id="previaFoto" class="foto-equipamento mb-2" alt="Previa da foto">
+                  <div class="foto-equipamento sem-foto mb-2" id="semFoto">
+                    Nenhuma foto selecionada
+                  </div>
+                  <input type="file" class="form-control form-control-sm" id="foto" name="foto"
+                         accept="image/jpeg,image/png,image/webp">
+                  <div class="form-text">JPEG, PNG ou WEBP, ate 5 MB.</div>
+                </div>
+
+                <!-- Coluna dos dados -->
+                <div class="col-12 col-sm-7">
+                  <div class="mb-3">
+                    <label for="nome" class="form-label">Nome <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nome" name="nome"
+                           maxlength="120" required>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="patrimonio" class="form-label">
+                      Patrimonio <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="patrimonio" name="patrimonio"
+                           placeholder="Ex.: PAT-0001" maxlength="40" required>
+                    <div class="form-text">Codigo unico de identificacao do bem.</div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="dataAquisicao" class="form-label">
+                      Data de aquisicao <span class="text-danger">*</span>
+                    </label>
+                    <input type="date" class="form-control" id="dataAquisicao"
+                           name="dataAquisicao" required>
+                  </div>
+
+                  <div class="mb-0">
+                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                    <select class="form-select" id="status" name="status" required>
+                      <option value="ATIVO">Ativo</option>
+                      <option value="EM_MANUTENCAO">Em manutencao</option>
+                      <option value="INATIVO">Inativo</option>
+                    </select>
+                    <div class="form-text" id="avisoStatus"></div>
+                  </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label for="categoriaId" class="form-label">
+                    Categoria <span class="text-danger">*</span>
+                  </label>
+                  <select class="form-select" id="categoriaId" name="categoriaId" required></select>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                  <label for="localId" class="form-label">Local <span class="text-danger">*</span></label>
+                  <select class="form-select" id="localId" name="localId" required></select>
+                </div>
+
+                <div class="col-12">
+                  <label for="descricao" class="form-label">Descricao</label>
+                  <textarea class="form-control" id="descricao" name="descricao" rows="2"
+                            maxlength="255"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary" id="btnSalvar">
+                <span class="spinner-border spinner-border-sm me-2 d-none"></span>Salvar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="../js/equipamentos.js"></script>
+</body>
+</html>

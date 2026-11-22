@@ -1,0 +1,39 @@
+# ============================================================
+# Infraestrutura como codigo para o Render (opcional).
+#
+# Da para criar o servico pelo painel, na mao, sem este arquivo.
+# Ele existe para registrar a configuracao usada - inclusive as
+# variaveis de ambiente, que ficam marcadas como sync: false
+# (precisam ser preenchidas no painel, nao no repositorio).
+# ============================================================
+services:
+  - type: web
+    name: manutencao-equipamentos-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: DIRECT_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        value: equipamentos
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
